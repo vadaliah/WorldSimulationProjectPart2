@@ -4,7 +4,7 @@ R2_MetallicElement,0.5,resource
 R3_Timber,0.7,resource
 R21_MetallicAlloys,0.2,resource
 R22_Electronics,0.5,resource
-R23_Housing,0.8,resource
+R23_Housing,2,resource
 R21_MetallicAlloysWaste,-0.05,waste
 R22_ElectronicsWaste,-0.02,waste
 R23_HousingWaste,-0.04,waste

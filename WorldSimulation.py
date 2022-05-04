@@ -18,7 +18,7 @@ def calculate_schedule_probability(node):
 
 
 
-def my_country_scheduler(my_country_name, resource_weight_filename, country_resources_filename,
+def my_country_scheduler(my_country, resource_weight_filename, country_resources_filename,
                          action_template_filename,
                          output_schedule_filename, num_output_schedules, depth_bound, frontier_max_size):
     """
@@ -42,19 +42,19 @@ def my_country_scheduler(my_country_name, resource_weight_filename, country_reso
     current_depth = 0
     root_node = Node()
     root_node.world=world
-    # score = root_node.calculate_schedule_probability()
-    score = 0
+    score = root_node.get_schedule_probability(my_country)
+    # score = 0
     frontier.put((-1 * score, root_node))
 
-    # schedule_str = ':'.join(
-    #     ['Depth', str(current_depth), 'Probability_score', str(root_node.get_probability_score()), 'ROOT Node'])le+
-    schedule_str = ''
+    schedule_str = ':'.join(
+        ['Depth', str(current_depth), 'Probability_score', str(root_node.get_schedule_probability(my_country)), 'ROOT Node'])
+    # schedule_str = ''
     schedule_queue.put(schedule_str, root_node)
 
     while not frontier.empty() and current_depth <= depth_bound:
         node = frontier.get()[1]
         current_depth += 1
-        node.generate_successor(frontier, schedule_queue, current_depth, actions,root_node,resource_weights)
+        node.generate_successor(frontier, schedule_queue, current_depth, actions,root_node,resource_weights,my_country)
 
 def main():
     my_country_scheduler('Atlantis', r'resourcedefination.csv',

@@ -13,6 +13,7 @@ class Country:
         self._discounted_reward = 0
         self._probability_succeds = 0
         self._expected_utility = 0
+        self._score=0
 
     def __getitem__(self, items):
         print(type(items), items)
@@ -34,13 +35,14 @@ class Country:
         :return:
         """
         country_successor = Country(self._name, self._self_flag)
+        country_successor._resources =self._resources
 
         for key, value in action.input_resources.items():
             if value > 0:
-                country_successor._resources[key] = self._resources[key] - value
+                country_successor._resources[key] -=  value
         for key, value in action.output_resources.items():
             if value > 0:
-                country_successor._resources[key] = self._resources[key] + value
+                country_successor._resources[key] +=  value
         return country_successor
 
     def calculate_state_quality(self, resource_weights):
@@ -53,11 +55,7 @@ class Country:
             # For Part , intend to enhance weights using country specific methodology
         """
         state_quality = 0
-        for resource, amount in self._resources.items():
-            if resource_weights.get(resource) is not None:
-                state_quality += amount * resource_weights[resource]
-            else:
-                continue
+        [state_quality := state_quality+ amount * resource_weights[resource] for resource, amount in self._resources.items() if resource_weights.get(resource) is not None ]
         self._state_quality = state_quality
         return self._state_quality
 
@@ -71,10 +69,9 @@ class Country:
         :param :
         :undiscounted_reward: state_quality(child) - state_quality(parent)
         """
-        for country in root_node.world:
-            root_country = country if country._name == self._name else None
+        root_country = [country for country in root_node.world if country._name == self._name ]
 
-        self._undiscounted_reward = self._state_quality - root_country._state_quality if root_country is not None else 0
+        self._undiscounted_reward = (self._state_quality - root_country[0]._state_quality if root_country[0] is not None else 0)
         return self._undiscounted_reward
 
     def get_undiscounted_reward(self):
@@ -92,10 +89,9 @@ class Country:
         # DR(c_i, s_j) = gamma^N * (Q_end(c_i, s_j) – Q_start(c_i, s_j)), where 0 <= gamma < 1.
         :return: (Gamma ** depth) * country.calculate_undiscounted_reward()
         """
-        for country in root_node.world:
-            root_country = country if country._name == self._name else None
+        root_country = [country for country in root_node.world if country._name == self._name ]
 
-        self._discounted_reward = (gamma ** depth)*self._state_quality - root_country._state_quality if root_country is not None else 0
+        self._discounted_reward = (gamma ** depth)*self._state_quality - root_country[0]._state_quality if root_country[0] is not None else 0
         return self._discounted_reward
 
     def get_discounted_reward(self):
@@ -130,7 +126,7 @@ class Country:
         """
 
         p = self.get_schedule_probability()
-        dr = self.get_discounted_reward(depth)
+        dr = self.get_discounted_reward()
         self._expected_utility = (p * dr) + ((1 - p) * c)
         return self._expected_utility
 

@@ -16,6 +16,7 @@ def load_initial_state(country_resource_filename,resource_weights):
     """
     world = []
     df = pd.read_csv(country_resource_filename)
+    df.fillna(0)
     for i in range(len(df)):
         resources = {}
 
@@ -40,6 +41,7 @@ def load_resource_weights(resource_filename):
     """
     resourceweights = {}
     df = pd.read_csv(resource_filename)
+    df.fillna(0)
     # print (df.columns.tolist())
 
     for i in range(len(df)):
@@ -58,6 +60,7 @@ def load_templates(template_filename):
     """
     actions = []
     df = pd.read_csv(template_filename)
+    df.fillna(0)
     for index, template in df.to_dict(orient="index").items():
         action = Action(template['TemplateName'],template['Action'])
         for key, value in template.items():
